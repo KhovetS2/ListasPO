@@ -2,16 +2,28 @@ import { Component } from "react";
 import BarraNavegacao from "./barraNavegacao";
 import ListaCliente from "./listaClientes";
 import FormularioCadastroCliente from "./formularioCadastroCliente";
+import Cliente from "../models/cliente";
+import CPF from "../models/cpf";
+import Pet from "../models/pet";
+import RG from "../models/rg";
+import Telefone from "../models/telefone";
 
 type state = {
-    tela: string
+    tela: string,
+    listaCliente: Array<Cliente>
 }
 
 export default class Roteador extends Component<{}, state>{
     constructor(props: {} | Readonly<{}>) {
         super(props)
+        let cliente = new Cliente('Isaque','Khovet',new CPF('12312312312', new Date()))
+        cliente.getRgs.push(new RG('123', new Date()))
+        cliente.getTelefones.push(new Telefone('123', '231241'))
+        cliente.getPets.push(new Pet('Jubileu', 'Ave', 'Masculino', 'Pombo'))
+        cliente.getPets.push(new Pet('Carlão', 'Cão', 'Masculino', 'Bodercoler'))
         this.state = {
-            tela: 'Clientes'
+            tela: 'Clientes',
+            listaCliente: new Array<Cliente>(cliente)
         }
         this.selecionarView = this.selecionarView.bind(this)
     }
@@ -30,14 +42,14 @@ export default class Roteador extends Component<{}, state>{
             return (
                 <>
                     {barraNavegacao}
-                    <ListaCliente tema="#e3f2fd" />
+                    <ListaCliente listaCliente={this.state.listaCliente} tema="#e3f2fd" />
                 </>
             )
         } else {
             return (
                 <>
                     {barraNavegacao}
-                    <FormularioCadastroCliente tema="#e3f2fd" />
+                    <FormularioCadastroCliente listaCliente={this.state.listaCliente} tema="#e3f2fd" />
                 </>
             )
         }
