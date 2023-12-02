@@ -5,6 +5,7 @@ import VisualizacaoCliente from "./visualizacaoCliente";
 import Listagem from "./Listagem";
 import Cadastros from "./Cadastros";
 import Cliente from "../models/Cliente";
+import { getCliente } from "../services/cliente";
 
 type State = {
     tela: string;
@@ -35,6 +36,13 @@ const Roteador: React.FC = () => {
         });
     };
 
+    const atualizarCliente = async (id: number)=>{
+        setState({
+            ...state,
+            cliente: await getCliente(id)
+        })
+    }
+
     const barraNavegacao = <BarraNavegacao seletorView={selecionarView} tema="#e3f2fd" botoes={['Clientes', 'Cadastros', 'Listagem']} />;
 
     return (
@@ -44,7 +52,7 @@ const Roteador: React.FC = () => {
                 <ListaCliente tema="#e3f2fd" clientView={clientView} />
             )}
             {state.tela === 'Cliente' && (
-                <VisualizacaoCliente cliente={state.cliente} />
+                <VisualizacaoCliente cliente={state.cliente} atualizarCliente={atualizarCliente} selectView={selecionarView} />
             )}
             {state.tela === 'Cadastros' && (
                 <Cadastros selectView={selecionarView} tema="#e3f2fd" />

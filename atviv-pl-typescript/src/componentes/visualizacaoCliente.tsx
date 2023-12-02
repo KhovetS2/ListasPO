@@ -26,11 +26,27 @@ import Cliente from "../models/Cliente"
 
 type props = {
     cliente: Cliente | undefined
+    selectView: Function;
+    atualizarCliente: Function
 }
-const VisualizacaoCliente: React.FC<props> = ({cliente}) => {
+const VisualizacaoCliente: React.FC<props> = ({cliente, selectView, atualizarCliente}) => {
 
 
-
+    const deletarCliente = async (e:React.MouseEvent) => {
+        e.preventDefault()
+        const body = {
+            id: cliente?.id
+        }
+        const request = await fetch('http://localhost:32831/cliente/excluir',{
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body)
+        })
+        selectView('Clientes', e)
+    }
 
     return (<Box p={'1rem'}>
         <Box
@@ -51,8 +67,8 @@ const VisualizacaoCliente: React.FC<props> = ({cliente}) => {
                     Ações
                 </MenuButton>
                 <MenuList>
-                    <EditarCliente />
-                    <MenuItem>Deletar Cliente</MenuItem>
+                    {cliente!==undefined && <EditarCliente cliente={cliente} atualizarCliente={atualizarCliente} />}
+                    <MenuItem onClick={deletarCliente}>Deletar Cliente</MenuItem>
                 </MenuList>
             </Menu>
         </Box>

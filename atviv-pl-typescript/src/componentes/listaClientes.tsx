@@ -25,7 +25,7 @@ const ListaCliente: React.FC<Props> = ({ tema, clientView }) => {
             <div className="list-group">
                 {listaClient !== undefined && listaClient.map((cliente) => {
                     return (
-                        <a href="#" className="list-group-item list-group-item-action" onClick={(e) => {
+                        <a key={cliente.id}href="#" className="list-group-item list-group-item-action" onClick={(e) => {
                             clientView("Cliente", e, cliente)
                         }}>
                             {cliente.nome}
