@@ -272,7 +272,7 @@ const FormularioCadastroCliente: React.FC<Props> = ({ tema, selectView }) => {
                         />
                     </Stack>
                     <Stack flexDirection={'row'} flexWrap={'wrap'}>
-                        {telefones.map((telefone) => {
+                        {telefones.map((telefone, index) => {
                             return (
                                 <Tag
                                     size={'md'}
@@ -283,7 +283,9 @@ const FormularioCadastroCliente: React.FC<Props> = ({ tema, selectView }) => {
                                 >
                                     <TagLeftIcon boxSize='12px' as={PhoneIcon} />
                                     <TagLabel>({telefone.ddd}){telefone.numero}</TagLabel>
-                                    <TagCloseButton />
+                                    <TagCloseButton onClick={(e)=>{
+                                        setTelefones(telefones.filter((telefone,i) => i!==index))
+                                    }} />
                                 </Tag>
                             )
                         })

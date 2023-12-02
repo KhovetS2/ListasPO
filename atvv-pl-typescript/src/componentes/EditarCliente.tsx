@@ -1,4 +1,4 @@
-import { Button, Box, Modal, ModalContent, ModalHeader, ModalCloseButton, ModalBody, FormLabel, Input, ModalFooter, ModalOverlay, useDisclosure, MenuItem, FormErrorMessage, InputGroup, Stack, IconButton, CloseButton } from "@chakra-ui/react"
+import { Button, Box, Modal, ModalContent, ModalHeader, ModalCloseButton, ModalBody, FormLabel, Input, ModalFooter, ModalOverlay, useDisclosure, MenuItem, FormErrorMessage, InputGroup, Stack, IconButton } from "@chakra-ui/react"
 import React, { useState } from "react"
 import Cliente from "../models/Cliente"
 import Telefone from "../models/Telefone"
@@ -274,9 +274,6 @@ const EditarCliente: React.FC<props> = ({ cliente, atualizarCliente }) => {
                                                     value={telefone.numero}
                                                     onChange={(e) => updateArrayTelefone(index, e)}
                                                 />
-                                                <CloseButton onClick={(e) => {
-                                                    setTelefones(telefones.filter((telefone, i) => i !== index))
-                                                }} />
                                             </Stack>
                                         )
                                     })}

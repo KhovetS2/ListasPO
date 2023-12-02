@@ -1,32 +1,77 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Button, Flex, FormErrorMessage, FormLabel, IconButton, Input, InputGroup, Stack, Tag, TagCloseButton, TagLabel, TagLeftIcon } from "@chakra-ui/react";
+import { getAllClientes } from "../services/cliente";
+import Cliente from "../models/Cliente";
+import Telefone from "../models/Telefone";
 import { AddIcon, PhoneIcon } from "@chakra-ui/icons";
 
 type Props = {
     tema: string;
+    selectView: Function
 };
-interface TelefoneCadastro {
-    ddd: string,
+
+type EnderecoType = {
+    rua: string;
+    numero: string;
+    bairro: string;
+    cidade: string;
+    estado: string;
+    codigoPostal: string;
+    informacoesAdicionais: string;
+}
+
+type TelefoneCadastro = {
+    ddd: string
     numero: string
 }
-const FormularioCadastroCliente: React.FC<Props> = ({ tema }) => {
+
+
+const FormularioCadastroCliente: React.FC<Props> = ({ tema, selectView }) => {
     const [nome, setNome] = useState<string>("");
     const [nomeSocial, setNomeSocial] = useState<string>("");
     const [email, setEmail] = useState<string>("");
-    const [rg, setRg] = useState<string>("");
     const [ddd, setDdd] = useState<string>("");
     const [numero, setNumero] = useState<string>("");
     const [isValid, setIsValid] = useState(true);
     const [telefones, setTelefones] = useState<Array<TelefoneCadastro>>(new Array<TelefoneCadastro>())
+
+
+    const [endereco, setEndereco] = useState<EnderecoType>({
+        rua: '',
+        numero: '',
+        bairro: '',
+        cidade: '',
+        estado: '',
+        codigoPostal: '',
+        informacoesAdicionais: '',
+    })
+
     const handleChangeEmail = (event: any) => {
         const inputValue = event.target.value;
         setEmail(inputValue);
 
         setIsValid(inputValue.includes('@'));
     };
-    const cadastrarCliente = () => {
-
+    const cadastrarCliente = async (e: React.MouseEvent) => {
+        e.preventDefault()
+        const body = {
+            nome: nome,
+            nomeSocial: nomeSocial,
+            email: email,
+            endereco: endereco,
+            telefones: telefones
+        }
+        const response = await fetch('http://localhost:32831/cliente/cadastrar', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body)
+        })
+        selectView('Clientes', e)
     };
+
 
     return (
         <div className="container-fluid">
@@ -71,17 +116,6 @@ const FormularioCadastroCliente: React.FC<Props> = ({ tema }) => {
                         )}
                     </InputGroup>
                 </div>
-                <div className="input-group mb-3">
-                    <Input
-                        type="text"
-                        className="form-control"
-                        placeholder="RG"
-                        aria-label="RG"
-                        aria-describedby="basic-addon1"
-                        value={rg}
-                        onChange={(e) => setRg(e.target.value)}
-                    />
-                </div>
                 <FormLabel>
                     <h3>
                         Endereço
@@ -101,6 +135,12 @@ const FormularioCadastroCliente: React.FC<Props> = ({ tema }) => {
                             aria-label="Rua"
                             aria-describedby="basic-addon1"
                             width={'25rem'}
+                            onChange={(e) => {
+                                setEndereco({
+                                    ...endereco,
+                                    rua: e.target.value,
+                                });
+                            }}
                         />
                         <Input
                             type="string"
@@ -109,6 +149,12 @@ const FormularioCadastroCliente: React.FC<Props> = ({ tema }) => {
                             aria-label="Número"
                             aria-describedby="basic-addon1"
                             width={'8rem'}
+                            onChange={(e) => {
+                                setEndereco({
+                                    ...endereco,
+                                    numero: e.target.value,
+                                });
+                            }}
                         />
                         <Input
                             type="string"
@@ -117,6 +163,12 @@ const FormularioCadastroCliente: React.FC<Props> = ({ tema }) => {
                             aria-label="Bairro"
                             aria-describedby="basic-addon1"
                             width={'10rem'}
+                            onChange={(e) => {
+                                setEndereco({
+                                    ...endereco,
+                                    bairro: e.target.value,
+                                });
+                            }}
                         />
                         <Input
                             type="string"
@@ -125,6 +177,12 @@ const FormularioCadastroCliente: React.FC<Props> = ({ tema }) => {
                             aria-label="Cidade"
                             aria-describedby="basic-addon1"
                             width={'10rem'}
+                            onChange={(e) => {
+                                setEndereco({
+                                    ...endereco,
+                                    cidade: e.target.value,
+                                });
+                            }}
                         />
                         <Input
                             type="string"
@@ -133,6 +191,12 @@ const FormularioCadastroCliente: React.FC<Props> = ({ tema }) => {
                             aria-label="Estado"
                             aria-describedby="basic-addon1"
                             width={'10rem'}
+                            onChange={(e) => {
+                                setEndereco({
+                                    ...endereco,
+                                    estado: e.target.value,
+                                });
+                            }}
                         />
                         <Input
                             type="string"
@@ -141,7 +205,13 @@ const FormularioCadastroCliente: React.FC<Props> = ({ tema }) => {
                             aria-label="CEP"
                             aria-describedby="basic-addon1"
                             width={'10rem'}
-                            maxLength={8}
+                            maxLength={9}
+                            onChange={(e) => {
+                                setEndereco({
+                                    ...endereco,
+                                    codigoPostal: e.target.value,
+                                });
+                            }}
                         />
                         <Input
                             type="string"
@@ -150,6 +220,12 @@ const FormularioCadastroCliente: React.FC<Props> = ({ tema }) => {
                             aria-label="Informações Adicionais"
                             aria-describedby="basic-addon1"
                             width={'15rem'}
+                            onChange={(e) => {
+                                setEndereco({
+                                    ...endereco,
+                                    informacoesAdicionais: e.target.value,
+                                });
+                            }}
                         />
                     </Stack>
                 </Box>
@@ -196,7 +272,7 @@ const FormularioCadastroCliente: React.FC<Props> = ({ tema }) => {
                         />
                     </Stack>
                     <Stack flexDirection={'row'} flexWrap={'wrap'}>
-                        {telefones.map((telefone, index) => {
+                        {telefones.map((telefone) => {
                             return (
                                 <Tag
                                     size={'md'}
@@ -207,9 +283,7 @@ const FormularioCadastroCliente: React.FC<Props> = ({ tema }) => {
                                 >
                                     <TagLeftIcon boxSize='12px' as={PhoneIcon} />
                                     <TagLabel>({telefone.ddd}){telefone.numero}</TagLabel>
-                                    <TagCloseButton onClick={(e)=>{
-                                        setTelefones(telefones.filter((telefone,i) => i!==index))
-                                    }} />
+                                    <TagCloseButton />
                                 </Tag>
                             )
                         })
