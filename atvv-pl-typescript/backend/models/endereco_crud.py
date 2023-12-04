@@ -6,9 +6,6 @@ from sqlalchemy.orm import relationship, mapped_column, Mapped
 
 
 class Endereco(Base):
-    """Classe que trabalha a tabela de notificações
-    e também contém um campo com as evidencia que estão relacionadas a ela
-    """
 
     __tablename__ = "endereco"
 
@@ -22,6 +19,7 @@ class Endereco(Base):
     informacoesAdicionais = Column(String)
     cliente_id = Column(Integer, ForeignKey("cliente.id", ondelete="CASCADE"))
 
+    cliente = relationship("Cliente", back_populates="endereco")
 
 def get_endereco(db: Session, id: int):
     """Busca no banco ao pedido de evidencia pelo id e retorna ela"""

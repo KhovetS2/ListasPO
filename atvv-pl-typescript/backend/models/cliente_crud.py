@@ -17,7 +17,8 @@ class Cliente(Base):
     endereco = relationship(endereco_crud.Endereco, cascade="all, delete-orphan", order_by=endereco_crud.Endereco.id)
     pets = relationship(pet_crud.Pet, cascade="all, delete-orphan", order_by=pet_crud.Pet.id)
     telefones = relationship(telefone_crud.Telefone, cascade="all, delete-orphan", order_by=telefone_crud.Telefone.id)
-    
+    compras_produto = relationship("CompraProduto", back_populates="cliente", cascade="all, delete-orphan")
+    compras_servico = relationship("CompraServico", back_populates="cliente", cascade="all, delete-orphan")
 
 
 def get_cliente(db: Session, id: int):

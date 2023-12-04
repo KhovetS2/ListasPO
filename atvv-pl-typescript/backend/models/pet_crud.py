@@ -17,6 +17,7 @@ class Pet(Base):
     genero = Column(String)
     cliente_id = Column(Integer, ForeignKey("cliente.id", ondelete="CASCADE"))
 
+    cliente = relationship("Cliente", back_populates="pets")
 
 def get_pet(db: Session, id: int):
     return db.query(Pet).filter(Pet.id == id).first()

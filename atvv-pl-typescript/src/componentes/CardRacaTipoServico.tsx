@@ -25,7 +25,6 @@ const CardRacaTipoServico: React.FC<props> = ({ consumoServicosPorRacaTipo }) =>
                                 p={'1rem'}
                                 borderRadius={'1rem'}
                                 textColor={'white'}
-                                key={servicoConsumo.servico.id}
                             >
                                 <ListItem
                                     ml={'0.5rem'}
@@ -34,8 +33,7 @@ const CardRacaTipoServico: React.FC<props> = ({ consumoServicosPorRacaTipo }) =>
                             </Box>
                         )
                     })}
-
-
+                    
                 </OrderedList>
             </CardBody>
         </Card>

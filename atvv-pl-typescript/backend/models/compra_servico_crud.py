@@ -7,11 +7,13 @@ from sqlalchemy.orm import relationship, mapped_column, Mapped
 
 class CompraServico(Base):
     __tablename__ = "compra_servico"
-    cliente_id: Mapped[int] = mapped_column(ForeignKey("cliente.id"), primary_key=True)
-    servico_id: Mapped[int] = mapped_column(ForeignKey("servico.id"), primary_key=True)
+    cliente_id: Mapped[int] = mapped_column(ForeignKey("cliente.id", ondelete="CASCADE"), primary_key=True)
+    servico_id: Mapped[int] = mapped_column(ForeignKey("servico.id", ondelete="CASCADE"), primary_key=True)
     raca = Column(String)
     tipo = Column(String)
     quatidade = Column(Integer)
+
+    cliente = relationship("Cliente", back_populates="compras_servico")
 
 
 def get_compra_servico_by_cliente_id_and_servico_id(

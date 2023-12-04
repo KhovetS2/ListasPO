@@ -1,3 +1,6 @@
+import { CompraProduto } from "../models/CompraProduto";
+import { CompraServico } from "../models/CompraServico";
+
 interface CreateCompraProduto {
     cliente_id: number,
     produto_id: number,
@@ -80,7 +83,10 @@ export const getAllCompraServico =async () => {
         },
     }
     )
-    return await response.json()
+    if (response.ok) {
+        return await response.json()    
+    }
+    return new Array<CompraServico>()
 }
 
 export const getAllCompraProduto =async () => {
@@ -93,5 +99,40 @@ export const getAllCompraProduto =async () => {
         },
     }
     )
-    return await response.json()
+    if (response.ok) {
+        return await response.json()    
+    }
+    return new Array<CompraServico>()
+}
+
+export const getAllCompraServicoByClienteId =async (cliente_id:number) => {
+    const response = await fetch(`http://localhost:8000/compra_servico/cliente_id/${cliente_id}`,
+    {
+        method:'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+    }
+    )
+    if (response.ok) {
+        return await response.json()    
+    }
+    return new Array<CompraServico>()
+}
+
+export const getAllCompraProdutoByClienteId =async (cliente_id:number) => {
+    const response = await fetch(`http://localhost:8000/compra_produto/cliente_id/${cliente_id}`,
+    {
+        method:'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+    }
+    )
+    if (response.ok) {
+        return await response.json()    
+    }
+    return new Array<CompraServico>()
 }

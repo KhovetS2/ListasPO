@@ -6,9 +6,10 @@ import Pet from "../models/Pet"
 import { useState } from "react"
 type props = {
     pets: Array<Pet>
+    setPets: React.Dispatch<React.SetStateAction<Pet[]>>
+    atualizarCliente: Function
 }
-const PetsAccordion: React.FC<props> = ({ pets }) => {
-    const [petsArray, setPetsArray] = useState(pets)
+const PetsAccordion: React.FC<props> = ({ pets, setPets, atualizarCliente }) => {
     const toast = useToast()
 
     const deletarPet = async (e: React.MouseEvent, pet: Pet, index:number) => {
@@ -25,12 +26,13 @@ const PetsAccordion: React.FC<props> = ({ pets }) => {
             error: { title: 'Erro ao excluír', description: 'Ocorreu um erro ao realizar exclusão' },
             loading: { title: 'Excluíndo Pet', description: 'Por favor, espere' },
           })
-        setPetsArray(petsArray.filter((petFilter, i)=> index!==i))
+        setPets(pets.filter((petFilter, i)=> index!==i))
+        atualizarCliente(pet.id)
     }
 
     return (
         <Accordion allowToggle width={['100%', '80%', '70%']}>
-            {petsArray.map((pet, index) => {
+            {pets.map((pet, index) => {
 
                 
                 return (
@@ -80,9 +82,9 @@ const PetsAccordion: React.FC<props> = ({ pets }) => {
                                         Ações
                                     </MenuButton>
                                     <MenuList>
-                                        <EditarPet pet={pet} index={index} setPetsArray={setPetsArray} petsArray={petsArray} />
+                                        <EditarPet pet={pet} index={index} setPets={setPets} pets={pets} />
                                         <MenuItem onClick={(e)=>{deletarPet(e, pet, index)}}>Deletar Pet</MenuItem>
-                                        <RealzarCompraModal pet={pet} />
+                                        <RealzarCompraModal pet={pet} atualizarCliente={atualizarCliente}/>
                                     </MenuList>
                                 </Menu>
                             </Center>

@@ -13,7 +13,7 @@ class Servico(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     nome = Column(String)
     valor = Column(Float)
-
+    
 
 def get_servico(db: Session, id: int):
     return db.query(Servico).filter(Servico.id == id).first()

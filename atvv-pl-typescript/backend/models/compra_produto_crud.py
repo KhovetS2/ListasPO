@@ -8,11 +8,13 @@ from sqlalchemy.orm import relationship, mapped_column, Mapped
 class CompraProduto(Base):
 
     __tablename__ = "compra_produto"
-    cliente_id: Mapped[int] = mapped_column(ForeignKey("cliente.id"), primary_key=True)
-    produto_id: Mapped[int] = mapped_column(ForeignKey("produto.id"), primary_key=True)
+    cliente_id: Mapped[int] = mapped_column(ForeignKey("cliente.id", ondelete="CASCADE"), primary_key=True)
+    produto_id: Mapped[int] = mapped_column(ForeignKey("produto.id", ondelete="CASCADE"), primary_key=True)
     raca = Column(String)
     tipo = Column(String)
     quatidade = Column(Integer)
+
+    cliente = relationship("Cliente", back_populates="compras_produto")
 
 
 def get_compra_produto_by_cliente_id_and_produto_id(db: Session, cliente_id: int, produto_id: int):

@@ -5,11 +5,11 @@ import Pet from "../models/Pet";
 type props = { 
     pet: Pet, 
     index:number, 
-    setPetsArray: React.Dispatch<React.SetStateAction<Pet[]>>, 
-    petsArray: Pet[] 
+    setPets: React.Dispatch<React.SetStateAction<Pet[]>>, 
+    pets: Pet[] 
 }
 
-const EditarPet: React.FC<props> = ({ pet , index, setPetsArray, petsArray}) => {
+const EditarPet: React.FC<props> = ({ pet , index, setPets, pets}) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [nome, setNome] = useState(pet.nome);
     const [tipo, setTipo] = useState(pet.tipo);
@@ -57,7 +57,7 @@ const EditarPet: React.FC<props> = ({ pet , index, setPetsArray, petsArray}) => 
           })
 
         
-        setPetsArray(petsArray.map((petMap, i)=>{
+        setPets(pets.map((petMap, i)=>{
             if(index ===i){
                 return body
             }

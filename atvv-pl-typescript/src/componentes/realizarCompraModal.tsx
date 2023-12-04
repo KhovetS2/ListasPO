@@ -6,13 +6,15 @@ import { Servico } from "../models/Servico"
 import { getAllProdutos } from "../services/produto"
 import { getAllServicos } from "../services/servico"
 import { compraProduto, compraServico } from "../services/compra"
+import { isQualifiedName } from "typescript"
 
 
 type props = {
     pet: Pet
+    atualizarCliente: Function
 }
 
-const RealzarCompraModal: React.FC<props> = ({pet}) => {
+const RealzarCompraModal: React.FC<props> = ({pet, atualizarCliente}) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [tipoCompra, setTipoCompra] = useState('')
     const [produtos, setProdutos] = useState(new Array<Produto>())
@@ -54,6 +56,7 @@ const RealzarCompraModal: React.FC<props> = ({pet}) => {
         setTipoCompra('')
         setItemId(0)
         setQuatidade(0)
+        atualizarCliente(pet.cliente_id)
         onClose()
     }
     const OverlayOne = () => (
@@ -113,7 +116,7 @@ const RealzarCompraModal: React.FC<props> = ({pet}) => {
                         </Box>
                         <Box>
                         <FormLabel>Quantidade</FormLabel>
-                        <NumberInput defaultValue={1} min={1}>
+                        <NumberInput defaultValue={1} value={quatidade} min={1}>
                             <NumberInputField value={quatidade} onChange={(e)=>{setQuatidade(Number.parseInt(e.target.value))}}/>
                         </NumberInput>
                         </Box>

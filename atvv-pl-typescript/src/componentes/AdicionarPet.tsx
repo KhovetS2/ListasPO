@@ -1,8 +1,13 @@
 import { Button, Box, Modal, ModalContent, ModalHeader, ModalCloseButton, ModalBody, FormLabel, Input, ModalFooter, ModalOverlay, useDisclosure, FormControl, FormErrorMessage, FormHelperText, } from "@chakra-ui/react"
 import React, { useState } from "react";
+import Pet from "../models/Pet";
 
+type props ={
+    cliente_id:number
+    atualizarCliente: Function
+}
 
-const AdicionarPet:React.FC<{cliente_id:number}> = ({cliente_id}) => {
+const AdicionarPet:React.FC<props> = ({cliente_id, atualizarCliente}) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [nome, setNome] = useState("");
     const [tipo, setTipo] = useState("");
@@ -40,6 +45,8 @@ const AdicionarPet:React.FC<{cliente_id:number}> = ({cliente_id}) => {
             },
             body: JSON.stringify(body)
         })
+        atualizarCliente(cliente_id)
+        onClose()
     }
 
     return (

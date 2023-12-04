@@ -7,7 +7,7 @@ import {
     MenuItem,
     MenuList,
     Table,
-    
+
     TableContainer,
     Tag,
     TagLabel,
@@ -23,18 +23,27 @@ import PetsAccordion from "./PetsAccordion"
 import AdicionarPet from "./AdicionarPet"
 import EditarCliente from "./EditarCliente"
 import Cliente from "../models/Cliente"
+import { useEffect, useState } from "react"
+import Pet from "../models/Pet"
+import { CompraProduto } from "../models/CompraProduto"
+import { CompraServico } from "../models/CompraServico"
+import { getAllCompraProdutoByClienteId, getAllCompraServicoByClienteId } from "../services/compra"
+import { Produto } from "../models/Produto"
+import { Servico } from "../models/Servico"
+import { getAllProdutos } from "../services/produto"
+import { getAllServicos } from "../services/servico"
 
 type props = {
     cliente: Cliente | undefined
     selectView: Function;
     atualizarCliente: Function
 }
-const VisualizacaoCliente: React.FC<props> = ({cliente, selectView, atualizarCliente}) => {
+const VisualizacaoCliente: React.FC<props> = ({ cliente, selectView, atualizarCliente }) => {
 
 
-    const deletarCliente = async (e:React.MouseEvent) => {
+    const deletarCliente = async (e: React.MouseEvent) => {
         e.preventDefault()
-        const request = await fetch(`http://localhost:8000/clientes/${cliente?.id}`,{
+        const request = await fetch(`http://localhost:8000/clientes/${cliente?.id}`, {
             method: 'DELETE',
             headers: {
                 'Accept': 'application/json',
@@ -43,6 +52,25 @@ const VisualizacaoCliente: React.FC<props> = ({cliente, selectView, atualizarCli
         })
         selectView('Clientes', e)
     }
+    const [pets, setPets] = useState(new Array<Pet>())
+    const [compraProduto, setCompraProduto] = useState(new Array<CompraProduto>())
+    const [compraServico, setCompraServico] = useState(new Array<CompraServico>())
+    const [produtos, setProdutos] = useState(new Array<Produto>())
+    const [servicos, setServicos] = useState(new Array<Servico>())
+    useEffect(() => {
+
+        if (cliente !== undefined && cliente.pets !== undefined && cliente.pets) {
+            (async () => {
+                setCompraProduto(await getAllCompraProdutoByClienteId(cliente.id))
+                setCompraServico(await getAllCompraServicoByClienteId(cliente.id))
+                setProdutos(await getAllProdutos())
+                setServicos(await getAllServicos())
+            })();
+            setPets(cliente.pets)
+        }
+
+    }, [cliente])
+
 
     return (<Box p={'1rem'}>
         <Box
@@ -63,7 +91,7 @@ const VisualizacaoCliente: React.FC<props> = ({cliente, selectView, atualizarCli
                     Ações
                 </MenuButton>
                 <MenuList>
-                    {cliente!==undefined && <EditarCliente cliente={cliente} atualizarCliente={atualizarCliente} />}
+                    {cliente !== undefined && <EditarCliente cliente={cliente} atualizarCliente={atualizarCliente} />}
                     <MenuItem onClick={deletarCliente}>Deletar Cliente</MenuItem>
                 </MenuList>
             </Menu>
@@ -76,7 +104,7 @@ const VisualizacaoCliente: React.FC<props> = ({cliente, selectView, atualizarCli
             textColor={'rgba(17, 0, 26, 0.89)'}
         >
             <h4>Endereço</h4>
-            {cliente?.endereco[0] !==undefined && cliente.endereco!==undefined && cliente?.endereco[0].rua}, {cliente?.endereco[0] !==undefined && cliente.endereco!==undefined && cliente?.endereco[0].numero} {cliente?.endereco[0] !==undefined && cliente.endereco!==undefined && cliente?.endereco[0].bairro}, {cliente?.endereco[0] !==undefined && cliente.endereco!==undefined && cliente?.endereco[0].cidade} - {cliente?.endereco[0] !==undefined && cliente.endereco!==undefined && cliente?.endereco[0].estado}, {cliente?.endereco[0] !==undefined && cliente.endereco!==undefined && cliente?.endereco[0].codigoPostal} - {cliente?.endereco[0] !==undefined && cliente.endereco!==undefined && cliente?.endereco[0].informacoesAdicionais}
+            {cliente?.endereco[0] !== undefined && cliente.endereco !== undefined && cliente?.endereco[0].rua}, {cliente?.endereco[0] !== undefined && cliente.endereco !== undefined && cliente?.endereco[0].numero} {cliente?.endereco[0] !== undefined && cliente.endereco !== undefined && cliente?.endereco[0].bairro}, {cliente?.endereco[0] !== undefined && cliente.endereco !== undefined && cliente?.endereco[0].cidade} - {cliente?.endereco[0] !== undefined && cliente.endereco !== undefined && cliente?.endereco[0].estado}, {cliente?.endereco[0] !== undefined && cliente.endereco !== undefined && cliente?.endereco[0].codigoPostal} - {cliente?.endereco[0] !== undefined && cliente.endereco !== undefined && cliente?.endereco[0].informacoesAdicionais}
         </Box>
         <Box
             marginBottom={'1rem'}
@@ -87,16 +115,16 @@ const VisualizacaoCliente: React.FC<props> = ({cliente, selectView, atualizarCli
         >
             <h4>Telefones</h4>
             <Stack flexDirection={'row'}>
-            {cliente?.telefones.map((telefone)=>{
-                return(
-                    <Tag size={'lg'} colorScheme='cyan' key={telefone.id}>
-                    <TagLeftIcon boxSize='12px' as={PhoneIcon} />
-                    <TagLabel>({telefone.ddd}){telefone.numero}</TagLabel>
-                </Tag>
-                )
-            })}
-                
-                
+                {cliente?.telefones.map((telefone) => {
+                    return (
+                        <Tag size={'lg'} colorScheme='cyan' key={telefone.id}>
+                            <TagLeftIcon boxSize='12px' as={PhoneIcon} />
+                            <TagLabel>({telefone.ddd}){telefone.numero}</TagLabel>
+                        </Tag>
+                    )
+                })}
+
+
             </Stack>
         </Box>
         <Box
@@ -109,8 +137,8 @@ const VisualizacaoCliente: React.FC<props> = ({cliente, selectView, atualizarCli
             <Center
                 flexDirection={'column'}
             >
-                {cliente?.pets && <PetsAccordion pets={cliente.pets} />}
-                {cliente!== undefined && <AdicionarPet cliente_id={cliente.id} />}
+                {cliente?.pets && <PetsAccordion pets={pets} setPets={setPets} atualizarCliente={atualizarCliente} />}
+                {cliente !== undefined && <AdicionarPet cliente_id={cliente.id} atualizarCliente={atualizarCliente} />}
             </Center>
         </Box>
         <Box
@@ -140,31 +168,26 @@ const VisualizacaoCliente: React.FC<props> = ({cliente, selectView, atualizarCli
                             </Tr>
                         </Thead>
                         <Tbody>
-                            <Tr>
-                                <Td>Produtos 1</Td>
-                                <Td>Produto</Td>
-                                <Td isNumeric>30</Td>
-                            </Tr>
-                            <Tr>
-                                <Td>Serviço 1</Td>
-                                <Td>Serviço</Td>
-                                <Td isNumeric>30</Td>
-                            </Tr>
-                            <Tr>
-                                <Td>Produtos 2</Td>
-                                <Td>Produto</Td>
-                                <Td isNumeric>30</Td>
-                            </Tr>
-                            <Tr>
-                                <Td>Produtos 3</Td>
-                                <Td>Produto</Td>
-                                <Td isNumeric>30</Td>
-                            </Tr>
-                            <Tr>
-                                <Td>Serviço 1</Td>
-                                <Td>Serviço</Td>
-                                <Td isNumeric>30</Td>
-                            </Tr>
+                            {compraProduto.map(compra => {
+                                const produto = produtos.filter(produto => produto.id === compra.produto_id)
+                                return (
+                                    <Tr>
+                                        <Td>{produto.length !== 0 && produto[0].nome}</Td>
+                                        <Td>Produto</Td>
+                                        <Td isNumeric>{compra.quatidade}</Td>
+                                    </Tr>
+                                )
+                            })}
+                            {compraServico.map(compra => {
+                                const servico = servicos.filter(servico => servico.id === compra.servico_id)
+                                return (
+                                    <Tr>
+                                        <Td>{servico.length !== 0 && servico[0].nome}</Td>
+                                        <Td>Serviço</Td>
+                                        <Td isNumeric>{compra.quatidade}</Td>
+                                    </Tr>
+                                )
+                            })}
                         </Tbody>
                     </Table>
                 </TableContainer>

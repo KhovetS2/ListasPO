@@ -2,12 +2,27 @@ import { Card, CardHeader, Heading, CardBody, CardFooter, Button, Text } from "@
 import EditarServico from "./EditarServico"
 import { ServicoConsumo } from "./Listagem"
 import React from "react"
+import { Servico } from "../models/Servico"
 
 type props = {
     consumoServico: ServicoConsumo
+    update: Function
 }
 
-const CardConsumoServico: React.FC<props> = ({consumoServico}) => {
+const CardConsumoServico: React.FC<props> = ({consumoServico, update}) => {
+
+    const deletarServico = async (e: React.MouseEvent, servico: Servico) => {
+        e.preventDefault()
+        const request = await fetch(`http://localhost:8000/servico/${servico.id}`, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            }
+        })
+        update()
+    }
+
     return (
         <Card
             bgColor={'rgba(160, 54, 217, 0.87);'}
@@ -21,8 +36,10 @@ const CardConsumoServico: React.FC<props> = ({consumoServico}) => {
                 <Text>Consumo: {consumoServico.valorGasto}</Text>
             </CardBody>
             <CardFooter gap={'1rem'}>
-                <EditarServico />
-                <Button colorScheme="red">Deletar Serviço</Button>
+                <EditarServico servico={consumoServico.servico} update={update} />
+                <Button colorScheme="red" onClick={(e)=>{
+                    deletarServico(e, consumoServico.servico)
+                }}>Deletar Serviço</Button>
             </CardFooter>
         </Card>
     )

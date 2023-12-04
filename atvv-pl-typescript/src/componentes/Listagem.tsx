@@ -69,14 +69,14 @@ const calcularConsumoCliente = (cliente: Cliente, comprasProdutos: CompraProduto
 };
 
 // Função para calcular o consumo de produtos por raça e tipo
-const calcularConsumoProdutosPorRacaTipo = (raca: string, tipo: string, comprasProdutos: CompraProduto[]): number => {
-    const comprasProdutosFiltradas = comprasProdutos.filter(compra => compra.raca === raca && compra.tipo === tipo);
+const calcularConsumoProdutosPorRacaTipo = (raca: string, tipo: string, produto:Produto, comprasProdutos: CompraProduto[]): number => {
+    const comprasProdutosFiltradas = comprasProdutos.filter(compra => compra.raca === raca && compra.tipo === tipo && compra.produto_id ===produto.id);
     return comprasProdutosFiltradas.reduce((total, compra) => total + compra.quatidade, 0);
 };
 
 // Função para calcular o consumo de serviços por raça e tipo
-const calcularConsumoServicosPorRacaTipo = (raca: string, tipo: string, comprasServicos: CompraServico[]): number => {
-    const comprasServicosFiltradas = comprasServicos.filter(compra => compra.raca === raca && compra.tipo === tipo);
+const calcularConsumoServicosPorRacaTipo = (raca: string, tipo: string, servico:Servico, comprasServicos: CompraServico[]): number => {
+    const comprasServicosFiltradas = comprasServicos.filter(compra => compra.raca === raca && compra.tipo === tipo && compra.servico_id===servico.id);
     return comprasServicosFiltradas.reduce((total, compra) => total + compra.quatidade, 0);
 };
 
@@ -140,16 +140,29 @@ const criarListaRacaTipoItem = (
 
     const racasTiposUnicas = new Array<{raca:string, tipo:string}>()
 
+    racaTipoComDuplicata.forEach(({raca, tipo})=>{
+        let isIn = false
+        for (let index = 0; index < racasTiposUnicas.length; index++) {
+            const element = racasTiposUnicas[index];
+            if (element.raca ===raca && element.tipo===tipo){
+                isIn=true
+            }
+        }
+        if (isIn ===false) {
+            racasTiposUnicas.push({raca,tipo})
+        }
+    })
+
     // Para cada raça e tipo único, criar um objeto RacaTipoItem
     racasTiposUnicas.forEach(({ raca, tipo }) => {
         const servicoConsumo: ServicoConsumo[] = servicos.map(servico => ({
             servico: servico,
-            valorGasto: calcularConsumoServicosPorRacaTipo(raca, tipo, comprasServicos),
+            valorGasto: calcularConsumoServicosPorRacaTipo(raca, tipo, servico, comprasServicos),
         }));
 
         const produtoConsumo: ProdutoConsumo[] = produtos.map(produto => ({
             produto: produto,
-            valorGasto: calcularConsumoProdutosPorRacaTipo(raca, tipo, comprasProdutos),
+            valorGasto: calcularConsumoProdutosPorRacaTipo(raca, tipo, produto, comprasProdutos),
         }));
 
         racaTipoProdutos.push({
@@ -181,6 +194,13 @@ const Listagem = () => {
     const [consumoServicos, setConsumoServicos] = useState<ServicoConsumo[]>()
     const [consumoItemPorRacaTipo, setConsumoItemPorRacaTipo] = useState<RacaTipoItem[]>()
 
+    const forceUpdateNaMarra = async () => {
+        setClientes(await getAllClientes())
+        setProdutos(await getAllProdutos())
+        setServicos(await getAllServicos())
+        setComprasProdutos(await getAllCompraProduto())
+        setComprasServicos(await getAllCompraServico())
+    }
 
     useEffect(() => {
         (async () => {
@@ -294,7 +314,7 @@ const Listagem = () => {
                         >
                             {consumoProdutos!==undefined && consumoProdutos.map(consumoProduto=>{
                                 return(
-                                    <CardConsumoProduto consumoProduto={consumoProduto} />
+                                    <CardConsumoProduto consumoProduto={consumoProduto} update={forceUpdateNaMarra} />
                                 )
                             })}
                         </Flex>
@@ -308,7 +328,7 @@ const Listagem = () => {
                         >
                             {consumoServicos!==undefined && consumoServicos.map(consumoServico=>{
                                 return(
-                                    <CardConsumoServico consumoServico={consumoServico} />
+                                    <CardConsumoServico consumoServico={consumoServico} update={forceUpdateNaMarra} />
                                 )
                             })}
 
