@@ -1,4 +1,4 @@
-import { Button, Box, Modal, ModalContent, ModalHeader, ModalCloseButton, ModalBody, FormLabel, Input, ModalFooter, ModalOverlay, useDisclosure, MenuItem, FormErrorMessage, InputGroup, Stack, IconButton } from "@chakra-ui/react"
+import { Button, Box, Modal, ModalContent, ModalHeader, ModalCloseButton, ModalBody, FormLabel, Input, ModalFooter, ModalOverlay, useDisclosure, MenuItem, FormErrorMessage, InputGroup, Stack, IconButton, CloseButton } from "@chakra-ui/react"
 import React, { useState } from "react"
 import Cliente from "../models/Cliente"
 import Telefone from "../models/Telefone"
@@ -15,12 +15,28 @@ const EditarCliente: React.FC<props> = ({ cliente, atualizarCliente }) => {
     if (cliente.email === null) {
         cliente.email = ''
     }
+    if (cliente.endereco[0] === undefined) {
+        let enderecoVazio: Endereco = { 
+            id: 0,
+            rua: '',
+            numero: '',
+            bairro: '',
+            cidade: '',
+            estado: '',
+            codigoPostal: '',
+            informacoesAdicionais: '',
+            cliente_id: cliente.id 
+        }
+        cliente.endereco[0] = enderecoVazio
+        console.log(cliente.endereco);
+        
+    }
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [nome, setNome] = useState<string>(cliente.nome);
     const [nomeSocial, setNomeSocial] = useState<string>(cliente.nomeSocial);
     const [email, setEmail] = useState<string>(cliente.email);
     const [telefones, setTelefones] = useState<Array<Telefone>>(cliente.telefones)
-    const [endereco, setEndereco] = useState<Endereco>(cliente.endereco)
+    const [endereco, setEndereco] = useState<Endereco>(cliente.endereco[0])
     const [isValid, setIsValid] = useState(true);
     const OverlayOne = () => (
         <ModalOverlay
@@ -50,24 +66,17 @@ const EditarCliente: React.FC<props> = ({ cliente, atualizarCliente }) => {
 
     const updateCliente = async (e: React.MouseEvent) => {
         e.preventDefault()
-        let listaTelefonesArrumada = telefones.map(telefone => {
-            if (telefone.id === 0) {
-                return {
-                    ddd: telefone.ddd,
-                    numero: telefone.numero
-                }
-            }
-            return telefone
-        })
+        setEndereco({ ...endereco, cliente_id: cliente.id })
         let updatedCliente = {
             id: cliente.id,
             nome: nome,
             nomeSocial: nomeSocial,
             email: email,
-            telefones: listaTelefonesArrumada,
-            endereco: endereco
+            telefones: telefones,
+            endereco: [endereco],
+            pets: cliente.pets
         }
-        await fetch('http://localhost:32831/cliente/atualizar', {
+        await fetch('http://localhost:8000/clientes/', {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
@@ -274,6 +283,9 @@ const EditarCliente: React.FC<props> = ({ cliente, atualizarCliente }) => {
                                                     value={telefone.numero}
                                                     onChange={(e) => updateArrayTelefone(index, e)}
                                                 />
+                                                <CloseButton onClick={(e) => {
+                                                    setTelefones(telefones.filter((telefoneFilter, i) => index !== i))
+                                                }} />
                                             </Stack>
                                         )
                                     })}
@@ -286,7 +298,8 @@ const EditarCliente: React.FC<props> = ({ cliente, atualizarCliente }) => {
                                             let telefone = {
                                                 id: 0,
                                                 ddd: '',
-                                                numero: ''
+                                                numero: '',
+                                                cliente_id: cliente.id
                                             }
                                             setTelefones(telefones.concat(telefone))
                                         }}

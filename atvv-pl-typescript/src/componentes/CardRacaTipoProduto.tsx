@@ -1,6 +1,11 @@
 import { Card, CardHeader, Heading, CardBody, Box, ListItem, OrderedList } from "@chakra-ui/react"
+import { RacaTipoItem } from "./Listagem"
 
-const CardRacaTipoProduto = () => {
+type props = {
+    consumoProdutoPorRacaTipo: RacaTipoItem
+}
+
+const CardRacaTipoProduto: React.FC<props> = ({consumoProdutoPorRacaTipo}) => {
     return (
         <Card
             bgColor={'rgba(160, 54, 217, 0.87);'}

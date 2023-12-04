@@ -1,5 +1,5 @@
-export const getAllClientes =async () => {
-    const response = await fetch('http://localhost:8000/clientes',
+export const getAllServicos =async () => {
+    const response = await fetch('http://localhost:8000/servico',
     {
         method:'GET',
         headers: {
@@ -10,8 +10,8 @@ export const getAllClientes =async () => {
     )
     return await response.json()
 }
-export const getCliente =async (id:number) => {
-    const response = await fetch(`http://localhost:8000/clientes/${id}`,
+export const getServico =async (id:number) => {
+    const response = await fetch(`http://localhost:8000/servico/${id}`,
     {
         method:'GET',
         headers: {

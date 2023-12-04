@@ -1,18 +1,23 @@
 import { Card, CardHeader, Heading, CardBody, CardFooter, Button, Text } from "@chakra-ui/react"
 import EditarProduto from "./EditarProduto"
+import { ProdutoConsumo } from "./Listagem"
+import React from "react"
 
-const CardConsumoProduto = () => {
+type props = {
+    consumoProduto: ProdutoConsumo
+}
+const CardConsumoProduto: React.FC<props> = ({consumoProduto}) => {
     return (
         <Card
             bgColor={'rgba(160, 54, 217, 0.87);'}
             textColor={'white'}
         >
             <CardHeader>
-                <Heading size='md'>Produto 1</Heading>
+                <Heading size='md'>{consumoProduto.produto.nome}</Heading>
             </CardHeader>
             <CardBody>
-                <Text>Valor: R$5,59</Text>
-                <Text>Consumo: 40</Text>
+                <Text>Valor: R${consumoProduto.produto.valor}</Text>
+                <Text>Consumo: {consumoProduto.valorGasto}</Text>
             </CardBody>
             <CardFooter gap={'1rem'}>
                 <EditarProduto />

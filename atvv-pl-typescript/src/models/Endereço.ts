@@ -8,5 +8,6 @@ export default interface Endereco {
     estado: string;
     codigoPostal: string;
     informacoesAdicionais: string;
+    cliente_id: number
 
 }

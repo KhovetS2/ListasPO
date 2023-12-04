@@ -34,16 +34,12 @@ const VisualizacaoCliente: React.FC<props> = ({cliente, selectView, atualizarCli
 
     const deletarCliente = async (e:React.MouseEvent) => {
         e.preventDefault()
-        const body = {
-            id: cliente?.id
-        }
-        const request = await fetch('http://localhost:32831/cliente/excluir',{
+        const request = await fetch(`http://localhost:8000/clientes/${cliente?.id}`,{
             method: 'DELETE',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(body)
+            }
         })
         selectView('Clientes', e)
     }
@@ -80,7 +76,7 @@ const VisualizacaoCliente: React.FC<props> = ({cliente, selectView, atualizarCli
             textColor={'rgba(17, 0, 26, 0.89)'}
         >
             <h4>Endereço</h4>
-            {cliente?.endereco.rua}, {cliente?.endereco.numero} {cliente?.endereco.bairro}, {cliente?.endereco.cidade} - {cliente?.endereco.estado}, {cliente?.endereco.codigoPostal} - {cliente?.endereco.informacoesAdicionais}
+            {cliente?.endereco[0] !==undefined && cliente.endereco!==undefined && cliente?.endereco[0].rua}, {cliente?.endereco[0] !==undefined && cliente.endereco!==undefined && cliente?.endereco[0].numero} {cliente?.endereco[0] !==undefined && cliente.endereco!==undefined && cliente?.endereco[0].bairro}, {cliente?.endereco[0] !==undefined && cliente.endereco!==undefined && cliente?.endereco[0].cidade} - {cliente?.endereco[0] !==undefined && cliente.endereco!==undefined && cliente?.endereco[0].estado}, {cliente?.endereco[0] !==undefined && cliente.endereco!==undefined && cliente?.endereco[0].codigoPostal} - {cliente?.endereco[0] !==undefined && cliente.endereco!==undefined && cliente?.endereco[0].informacoesAdicionais}
         </Box>
         <Box
             marginBottom={'1rem'}
@@ -113,8 +109,8 @@ const VisualizacaoCliente: React.FC<props> = ({cliente, selectView, atualizarCli
             <Center
                 flexDirection={'column'}
             >
-                <PetsAccordion />
-                <AdicionarPet />
+                {cliente?.pets && <PetsAccordion pets={cliente.pets} />}
+                {cliente!== undefined && <AdicionarPet cliente_id={cliente.id} />}
             </Center>
         </Box>
         <Box

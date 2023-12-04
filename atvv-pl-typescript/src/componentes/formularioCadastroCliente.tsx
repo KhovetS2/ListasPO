@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Flex, FormErrorMessage, FormLabel, IconButton, Input, InputGroup, Stack, Tag, TagCloseButton, TagLabel, TagLeftIcon } from "@chakra-ui/react";
+import { Box, Button, Flex, FormControl, FormErrorMessage, FormLabel, IconButton, Input, InputGroup, Stack, Tag, TagCloseButton, TagLabel, TagLeftIcon } from "@chakra-ui/react";
 import { getAllClientes } from "../services/cliente";
 import Cliente from "../models/Cliente";
 import Telefone from "../models/Telefone";
@@ -18,6 +18,7 @@ type EnderecoType = {
     estado: string;
     codigoPostal: string;
     informacoesAdicionais: string;
+    cliente_id: number
 }
 
 type TelefoneCadastro = {
@@ -44,6 +45,7 @@ const FormularioCadastroCliente: React.FC<Props> = ({ tema, selectView }) => {
         estado: '',
         codigoPostal: '',
         informacoesAdicionais: '',
+        cliente_id:0
     })
 
     const handleChangeEmail = (event: any) => {
@@ -54,6 +56,19 @@ const FormularioCadastroCliente: React.FC<Props> = ({ tema, selectView }) => {
     };
     const cadastrarCliente = async (e: React.MouseEvent) => {
         e.preventDefault()
+        if (nome.trim() === "" ||
+            nomeSocial.trim() === "" ||
+            email.trim() === "" ||
+            endereco.rua.trim() === "" ||
+            endereco.numero.trim() === "" ||
+            endereco.bairro.trim() === "" ||
+            endereco.cidade.trim() === "" ||
+            endereco.estado.trim() === "" ||
+            endereco.codigoPostal.trim() === ""
+        ) {
+            alert("Preencha todos os campos obrigatórios.");
+            return;
+        }
         const body = {
             nome: nome,
             nomeSocial: nomeSocial,
@@ -61,7 +76,7 @@ const FormularioCadastroCliente: React.FC<Props> = ({ tema, selectView }) => {
             endereco: endereco,
             telefones: telefones
         }
-        const response = await fetch('http://localhost:32831/cliente/cadastrar', {
+        const response = await fetch('http://localhost:8000/clientes/', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -77,44 +92,56 @@ const FormularioCadastroCliente: React.FC<Props> = ({ tema, selectView }) => {
         <div className="container-fluid">
             <form>
                 <div className="input-group mb-3">
-                    <Input
-                        type="text"
-                        className="form-control"
-                        placeholder="Nome"
-                        aria-label="Nome"
-                        aria-describedby="basic-addon1"
-                        value={nome}
-                        onChange={(e) => setNome(e.target.value)}
-                    />
-                </div>
-                <div className="input-group mb-3">
-                    <Input
-                        type="text"
-                        className="form-control"
-                        placeholder="Nome social"
-                        aria-label="Nome social"
-                        aria-describedby="basic-addon1"
-                        value={nomeSocial}
-                        onChange={(e) => setNomeSocial(e.target.value)}
-                    />
-                </div>
-                <div className="input-group mb-3">
-                    <InputGroup>
+                    <FormControl isRequired>
+                        <FormLabel>Nome</FormLabel>
                         <Input
+                            required
+                            type="text"
                             className="form-control"
-                            placeholder="Email"
-                            aria-label="Email"
+                            placeholder="Nome"
+                            aria-label="Nome"
                             aria-describedby="basic-addon1"
-                            value={email}
-                            onChange={handleChangeEmail}
-                            isInvalid={!isValid}
+                            value={nome}
+                            onChange={(e) => setNome(e.target.value)}
                         />
-                        {!isValid && (
-                            <FormErrorMessage>
-                                O email deve conter o símbolo '@'.
-                            </FormErrorMessage>
-                        )}
-                    </InputGroup>
+                    </FormControl>
+                </div>
+                <div className="input-group mb-3">
+                    <FormControl isRequired>
+                        <FormLabel>Nome social</FormLabel>
+                        <Input
+                            required
+                            type="text"
+                            className="form-control"
+                            placeholder="Nome social"
+                            aria-label="Nome social"
+                            aria-describedby="basic-addon1"
+                            value={nomeSocial}
+                            onChange={(e) => setNomeSocial(e.target.value)}
+                        />
+                    </FormControl>
+                </div>
+                <div className="input-group mb-3">
+                    <FormControl isRequired>
+                        <FormLabel>Email</FormLabel>
+                        <InputGroup>
+                            <Input
+                                required
+                                className="form-control"
+                                placeholder="Email"
+                                aria-label="Email"
+                                aria-describedby="basic-addon1"
+                                value={email}
+                                onChange={handleChangeEmail}
+                                isInvalid={!isValid}
+                            />
+                            {!isValid && (
+                                <FormErrorMessage>
+                                    O email deve conter o símbolo '@'.
+                                </FormErrorMessage>
+                            )}
+                        </InputGroup>
+                    </FormControl>
                 </div>
                 <FormLabel>
                     <h3>
@@ -128,105 +155,152 @@ const FormularioCadastroCliente: React.FC<Props> = ({ tema, selectView }) => {
                     className="input-group mb-3"
                 >
                     <Stack direction={'row'} flexWrap={'wrap'}>
-                        <Input
-                            type="string"
-                            className="form-control"
-                            placeholder="Rua"
-                            aria-label="Rua"
-                            aria-describedby="basic-addon1"
-                            width={'25rem'}
-                            onChange={(e) => {
-                                setEndereco({
-                                    ...endereco,
-                                    rua: e.target.value,
-                                });
-                            }}
-                        />
-                        <Input
-                            type="string"
-                            className="form-control"
-                            placeholder="Número"
-                            aria-label="Número"
-                            aria-describedby="basic-addon1"
-                            width={'8rem'}
-                            onChange={(e) => {
-                                setEndereco({
-                                    ...endereco,
-                                    numero: e.target.value,
-                                });
-                            }}
-                        />
-                        <Input
-                            type="string"
-                            className="form-control"
-                            placeholder="Bairro"
-                            aria-label="Bairro"
-                            aria-describedby="basic-addon1"
-                            width={'10rem'}
-                            onChange={(e) => {
-                                setEndereco({
-                                    ...endereco,
-                                    bairro: e.target.value,
-                                });
-                            }}
-                        />
-                        <Input
-                            type="string"
-                            className="form-control"
-                            placeholder="Cidade"
-                            aria-label="Cidade"
-                            aria-describedby="basic-addon1"
-                            width={'10rem'}
-                            onChange={(e) => {
-                                setEndereco({
-                                    ...endereco,
-                                    cidade: e.target.value,
-                                });
-                            }}
-                        />
-                        <Input
-                            type="string"
-                            className="form-control"
-                            placeholder="Estado"
-                            aria-label="Estado"
-                            aria-describedby="basic-addon1"
-                            width={'10rem'}
-                            onChange={(e) => {
-                                setEndereco({
-                                    ...endereco,
-                                    estado: e.target.value,
-                                });
-                            }}
-                        />
-                        <Input
-                            type="string"
-                            className="form-control"
-                            placeholder="CEP"
-                            aria-label="CEP"
-                            aria-describedby="basic-addon1"
-                            width={'10rem'}
-                            maxLength={9}
-                            onChange={(e) => {
-                                setEndereco({
-                                    ...endereco,
-                                    codigoPostal: e.target.value,
-                                });
-                            }}
-                        />
-                        <Input
-                            type="string"
-                            className="form-control"
-                            placeholder="Informações Adicionais"
-                            aria-label="Informações Adicionais"
-                            aria-describedby="basic-addon1"
-                            width={'15rem'}
-                            onChange={(e) => {
-                                setEndereco({
-                                    ...endereco,
-                                    informacoesAdicionais: e.target.value,
-                                });
-                            }}
-                        />
+
+                        <Box>
+                            <FormControl isRequired>
+                                <FormLabel>Rua</FormLabel>
+                                <Input
+                                    required
+                                    isRequired
+                                    errorBorderColor='red.300'
+                                    type="string"
+                                    className="form-control"
+                                    placeholder="Rua"
+                                    aria-label="Rua"
+                                    aria-describedby="basic-addon1"
+                                    width={'25rem'}
+                                    onChange={(e) => {
+                                        setEndereco({
+                                            ...endereco,
+                                            rua: e.target.value,
+                                        });
+                                    }}
+                                />
+                            </FormControl>
+
+                        </Box>
+                        <Box>
+                            <FormControl isRequired>
+                                <FormLabel>Número</FormLabel>
+                                <Input
+                                    required
+                                    type="string"
+                                    className="form-control"
+                                    placeholder="Número"
+                                    aria-label="Número"
+                                    aria-describedby="basic-addon1"
+                                    width={'8rem'}
+                                    onChange={(e) => {
+                                        setEndereco({
+                                            ...endereco,
+                                            numero: e.target.value,
+                                        });
+                                    }}
+                                />
+                            </FormControl>
+
+                        </Box>
+                        <Box>
+                            <FormControl isRequired>
+                                <FormLabel>Bairro</FormLabel>
+                                <Input
+                                    required
+                                    type="string"
+                                    className="form-control"
+                                    placeholder="Bairro"
+                                    aria-label="Bairro"
+                                    aria-describedby="basic-addon1"
+                                    width={'10rem'}
+                                    onChange={(e) => {
+                                        setEndereco({
+                                            ...endereco,
+                                            bairro: e.target.value,
+                                        });
+                                    }}
+                                />
+                            </FormControl>
+
+                        </Box>
+                        <Box>
+                            <FormControl isRequired>
+                                <FormLabel>Cidade</FormLabel>
+                                <Input
+                                    required
+                                    type="string"
+                                    className="form-control"
+                                    placeholder="Cidade"
+                                    aria-label="Cidade"
+                                    aria-describedby="basic-addon1"
+                                    width={'10rem'}
+                                    onChange={(e) => {
+                                        setEndereco({
+                                            ...endereco,
+                                            cidade: e.target.value,
+                                        });
+                                    }}
+                                />
+                            </FormControl>
+                        </Box>
+                        <Box>
+                            <FormControl isRequired>
+                                <FormLabel>Estado</FormLabel>
+                                <Input
+                                    required
+                                    type="string"
+                                    className="form-control"
+                                    placeholder="Estado"
+                                    aria-label="Estado"
+                                    aria-describedby="basic-addon1"
+                                    width={'10rem'}
+                                    onChange={(e) => {
+                                        setEndereco({
+                                            ...endereco,
+                                            estado: e.target.value,
+                                        });
+                                    }}
+                                />
+                            </FormControl>
+                        </Box>
+                        <Box>
+                            <FormControl isRequired>
+                                <FormLabel>CEP</FormLabel>
+                                <Input
+                                    required
+                                    type="string"
+                                    className="form-control"
+                                    placeholder="CEP"
+                                    aria-label="CEP"
+                                    aria-describedby="basic-addon1"
+                                    width={'10rem'}
+                                    maxLength={9}
+                                    onChange={(e) => {
+                                        setEndereco({
+                                            ...endereco,
+                                            codigoPostal: e.target.value,
+                                        });
+                                    }}
+                                />
+                            </FormControl>
+                        </Box>
+                        <Box>
+                            <FormControl>
+                                <FormLabel>Informações Adicionais</FormLabel>
+                                <Input
+                                    type="string"
+                                    className="form-control"
+                                    placeholder="Informações Adicionais"
+                                    aria-label="Informações Adicionais"
+                                    aria-describedby="basic-addon1"
+                                    width={'15rem'}
+                                    onChange={(e) => {
+                                        setEndereco({
+                                            ...endereco,
+                                            informacoesAdicionais: e.target.value,
+                                        });
+                                    }}
+                                />
+                            </FormControl>
+                        </Box>
                     </Stack>
                 </Box>
 
